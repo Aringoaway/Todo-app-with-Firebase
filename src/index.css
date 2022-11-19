@@ -20,7 +20,7 @@ code {
   margin: auto;
 }
 
-.todo-title, .todo-description, .todo-date {
+.todo-title, .todo-description, .todo-date, .todo-file {
   display: flex;
   flex-direction: column;
   align-items: flex-start;

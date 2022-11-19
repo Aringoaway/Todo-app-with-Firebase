@@ -28,6 +28,12 @@ h3, p {
     align-items: flex-start;
 }
 
+img {
+    max-width: 100px;
+    height: auto;
+}
+
+
 .btn-remove {
     width: auto;
     padding: 0 15px;
