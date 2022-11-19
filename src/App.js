@@ -3,14 +3,15 @@ import {db} from "./firebase";
 import {query, collection, onSnapshot, updateDoc, doc, addDoc, deleteDoc} from "firebase/firestore"
 import dayjs from "dayjs";
 
-import TodoCard from "./TodoCard";
+import './App.css';
+import TodoCard from "./Components/TodoCard";
 
 function App() {
 	const [todos, setTodos] = useState([]);
 	const [input, setInput] = useState("");
 	const [textArea, setTextArea] = useState("");
 	const [completionDate, setCompletionDate] = useState("");
-	console.log(completionDate, "compl")
+	const [actualDate, setActualDate] = useState(dayjs().format("YYYY/MM/DD"));
 
 	useEffect(() => {
 		const q = query(collection(db, "todos"));
@@ -34,6 +35,7 @@ function App() {
 		await addDoc(collection(db, "todos"), {
 			title: input,
 			description: textArea,
+			data: completionDate,
 			completed: false
 		});
 		setInput("");
@@ -52,37 +54,41 @@ function App() {
 
 	return (
 		<div className="App">
-			<div>
+			<div className="todo-app">
 				<h1>Todo</h1>
-				<form onSubmit={createTodo}>
-					<label htmlFor="title">Todo title</label>
-					<input
-						type="text"
-						id="title"
-						placeholder="todo"
-						value={input}
-						onChange={(e) => setInput(e.target.value)}
-					/>
-					<label htmlFor="description">Todo description</label>
-					<textarea
-						id="description"
-						rows="4" cols="50"
-						value={textArea}
-						onChange={(e) => setTextArea(e.target.value)}
-					/>
-					<label htmlFor="start">Start date:</label>
+				<form className="todo-form" onSubmit={createTodo}>
+					<div className="todo-title">
+						<label htmlFor="title">Todo title</label>
+						<input
+							type="text"
+							id="title"
+							placeholder="todo"
+							value={input}
+							onChange={(e) => setInput(e.target.value)}
+						/>
+					</div>
+					<div className="todo-description">
+						<label htmlFor="description">Todo description</label>
+						<textarea
+							id="description"
+							value={textArea}
+							onChange={(e) => setTextArea(e.target.value)}
+						/>
+					</div>
+					<div className="todo-date">
+						<label htmlFor="start">Start date:</label>
+						<input
+							type="date"
+							id="start"
+							name="trip-start"
+							min={actualDate}
+							max="2025-12-31"
+							value={completionDate}
+							onChange={(e) => setCompletionDate(e.target.value)}
+						/>
+					</div>
 
-					<input
-						type="date"
-						id="start"
-						name="trip-start"
-						// value="2022-11-19"
-						min="2020-01-01"
-						max="2025-12-31"
-						value={completionDate}
-						onChange={(e) => setCompletionDate(e.target.value)}
-					/>
-					<button>Add todo</button>
+					<button className="todo-btn-add">Add todo</button>
 				</form>
 				<div>
 					{todos && todos.map((todo, idx) => (

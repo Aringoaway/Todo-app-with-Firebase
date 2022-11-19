@@ -1,0 +1,54 @@
+h3, p {
+    margin: 0;
+}
+
+.text-line-through {
+    text-decoration: line-through;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 500px;
+    margin: 30px auto 0;
+
+}
+
+.info-wrapper {
+    display: flex;
+}
+
+.info-wrapper input {
+    margin-right: 10px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.btn-remove {
+    width: auto;
+    padding: 0 15px;
+    background-color: initial;
+    background-image: linear-gradient(#006d77 100%, #83c5be 100%);
+    border-radius: 5px;
+    border-style: none;
+    box-shadow: rgba(245, 244, 247, .25) 0 1px 1px inset;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    height: 40px;
+    line-height: 40px;
+    outline: 0;
+    text-align: center;
+    transition: all .3s cubic-bezier(.05, .03, .35, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: bottom;
+}
