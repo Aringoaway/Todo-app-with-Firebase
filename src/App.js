@@ -13,11 +13,10 @@ function App() {
 	const [input, setInput] = useState("");
 	const [textArea, setTextArea] = useState("");
 	const [completionDate, setCompletionDate] = useState("");
-	const [actualDate, setActualDate] = useState(dayjs().format("YYYY/MM/DD"));
-	const [file, setFile] = useState();
+	const [actualDate, setActualDate] = useState(dayjs().format("YYYY-MM-DD"));
+	const [file, setFile] = useState(undefined);
 	const [fileList, setFileList] = useState([]);
 	const [imgUrl, setImgUrl] = useState("");
-	// const [fileList, setFileList] = useState([{url: null, id: null}]);
 
 	const fileListRef = ref(storage, "files/");
 
@@ -33,24 +32,8 @@ function App() {
 		listAll(fileListRef).then((res) => {
 			res.items.forEach((item) => {
 				getDownloadURL(item).then((url) => {
-					// setFileList((prev) => [...prev, url]);
-					setFileList([url]);
+					setFileList((prev) => [...prev, url]);
 				})
-				// getMetadata(item)
-				// 	.then((metadata) => {
-				// 		setFileList((prev) => [...prev, metadata.name]);
-				// 	})
-				// getMetadata(item)
-				// 	.then((metadata) => {
-				// 		setFileList((prev) => [...prev, metadata]);
-				// 	})
-				// getDownloadURL(item).then((url) => {
-				// 	setFileList((prev) => ({...prev, url: url }));
-				// }).then((snapshot) => {
-				// 	getMetadata(item).then((metadata) => {
-				// 		setFileList((prev) => ({...prev, id: metadata.name }));
-				// 	})
-				// })
 			})
 		});
 		return () => unsubscribe();
@@ -60,17 +43,12 @@ function App() {
 	const createTodo = async (e) => {
 		e.preventDefault(e);
 		let fileId = v4()
-		if (file !== null) {
+		if (file != undefined) {
 			const fileRef = ref(storage, `files/${file.name + fileId}`);
 			uploadBytes(fileRef, file).then((snapshot) => {
 				getDownloadURL(snapshot.ref).then((url) => {
 					setFileList((prev) => [...prev, url]);
 				})
-
-				// getDownloadURL(snapshot.ref).then((url) => {
-				// 	setFileList((prev) => [...prev, {url: url, id: fileId}]);
-				// })
-
 			})
 		}
 
@@ -79,16 +57,20 @@ function App() {
 			return;
 		}
 
+		if (completionDate === "") {
+			alert("Please enter a finish date");
+			return;
+		}
+
 		await addDoc(collection(db, "todos"), {
 			title: input,
 			description: textArea,
 			data: completionDate,
 			fileId: fileId,
-			completed: false
+			completed: (actualDate > completionDate)
 		});
 		setInput("");
 		setTextArea("");
-		setFile();
 		setCompletionDate("");
 	}
 
@@ -125,12 +107,13 @@ function App() {
 						<label htmlFor="description">Todo description</label>
 						<textarea
 							id="description"
+							placeholder="Enter a description"
 							value={textArea}
 							onChange={(e) => setTextArea(e.target.value)}
 						/>
 					</div>
 					<div className="todo-date">
-						<label htmlFor="start">Start date:</label>
+						<label htmlFor="start">Finish date:</label>
 						<input
 							type="date"
 							id="start"
@@ -150,7 +133,15 @@ function App() {
 				</form>
 				<div>
 					{todos && todos.map((todo, idx) => (
-						<TodoCard key={idx} todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} fileList={fileList} setImgUrl={setImgUrl}/>
+						<TodoCard
+							key={idx}
+							todo={todo}
+							toggleComplete={toggleComplete}
+							deleteTodo={deleteTodo}
+							fileList={fileList}
+							setImgUrl={setImgUrl}
+							actualDate={actualDate}
+						/>
 					))}
 				</div>
 			</div>
