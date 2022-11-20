@@ -125,8 +125,13 @@ function App() {
 						/>
 					</div>
 					<div className="todo-file">
-						<label htmlFor="file">Select a file:</label>
-						<input type="file" id="file" onChange={(e) => setFile(e.target.files[0])}/>
+						<label htmlFor="file">Select an image:</label>
+						<input
+							type="file"
+							id="file"
+							accept="image/*"
+							onChange={(e) => setFile(e.target.files[0])}
+						/>
 					</div>
 
 					<button className="todo-btn-add">Add todo</button>
