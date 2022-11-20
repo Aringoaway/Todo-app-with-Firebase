@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {db, storage} from "./firebase";
 import {query, collection, onSnapshot, updateDoc, doc, addDoc, deleteDoc} from "firebase/firestore"
-import {ref, uploadBytes, listAll, getDownloadURL, getMetadata} from "firebase/storage"
+import {ref, uploadBytes, listAll, getDownloadURL, deleteObject} from "firebase/storage"
 import dayjs from "dayjs";
 import {v4} from "uuid"
 
@@ -16,6 +16,7 @@ function App() {
 	const [actualDate, setActualDate] = useState(dayjs().format("YYYY/MM/DD"));
 	const [file, setFile] = useState();
 	const [fileList, setFileList] = useState([]);
+	const [imgUrl, setImgUrl] = useState("");
 	// const [fileList, setFileList] = useState([{url: null, id: null}]);
 
 	const fileListRef = ref(storage, "files/");
@@ -31,13 +32,14 @@ function App() {
 		});
 		listAll(fileListRef).then((res) => {
 			res.items.forEach((item) => {
-				// getDownloadURL(item).then((url) => {
-				// 	setFileList((prev) => [...prev, url]);
-				// })
-				getMetadata(item)
-					.then((metadata) => {
-						setFileList((prev) => [...prev, metadata.name]);
-					})
+				getDownloadURL(item).then((url) => {
+					// setFileList((prev) => [...prev, url]);
+					setFileList([url]);
+				})
+				// getMetadata(item)
+				// 	.then((metadata) => {
+				// 		setFileList((prev) => [...prev, metadata.name]);
+				// 	})
 				// getMetadata(item)
 				// 	.then((metadata) => {
 				// 		setFileList((prev) => [...prev, metadata]);
@@ -86,6 +88,8 @@ function App() {
 		});
 		setInput("");
 		setTextArea("");
+		setFile();
+		setCompletionDate("");
 	}
 
 	const toggleComplete = async (todo) => {
@@ -96,6 +100,10 @@ function App() {
 
 	const deleteTodo = async (id) => {
 		await deleteDoc(doc(db, "todos", id));
+		const urlRef = ref(storage, imgUrl);
+		await deleteObject(urlRef).then(() => {
+			console.log("File deleted successfully")
+		})
 	}
 
 	return (
@@ -135,14 +143,14 @@ function App() {
 					</div>
 					<div className="todo-file">
 						<label htmlFor="file">Select a file:</label>
-						<input type="file" id="file" multiple onChange={(e) => setFile(e.target.files[0])}/>
+						<input type="file" id="file" onChange={(e) => setFile(e.target.files[0])}/>
 					</div>
 
 					<button className="todo-btn-add">Add todo</button>
 				</form>
 				<div>
 					{todos && todos.map((todo, idx) => (
-						<TodoCard key={idx} todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} fileList={fileList}/>
+						<TodoCard key={idx} todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} fileList={fileList} setImgUrl={setImgUrl}/>
 					))}
 				</div>
 			</div>

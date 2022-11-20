@@ -1,7 +1,8 @@
-import React from "react"
+import React, {useState} from "react"
 import "./todoCard.css"
 
-const TodoCard = ({todo, toggleComplete, deleteTodo, fileList}) => {
+const TodoCard = ({todo, toggleComplete, deleteTodo, fileList, setImgUrl}) => {
+
 	return (
 		<div className={todo.completed ? "completed" : ""}>
 			<div className="wrapper">
@@ -22,9 +23,16 @@ const TodoCard = ({todo, toggleComplete, deleteTodo, fileList}) => {
 						<p>{todo.data}</p>
 						{console.log(fileList)}
 						{console.log(todo.fileId)}
-						{/*{fileList.map((url, idx) => (*/}
-						{/*	<img key={idx} src={url}/>*/}
-						{/*))}*/}
+
+						{fileList.map((url, idx) => {
+							if (url?.includes(todo.fileId)) {
+								setImgUrl(url);
+								return (
+									<img key={idx} src={url}/>
+								)
+							}
+
+						})}
 					</div>
 				</div>
 				<button className="btn-remove" onClick={() => deleteTodo(todo.id)}>Remove todo</button>
